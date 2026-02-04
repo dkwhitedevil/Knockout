@@ -1,203 +1,199 @@
-# 🃏 KNOCKOUT
+# 🃏 **KNOCKOUT – Official Game Rulebook (Final)**
 
-### Official Game Rule Book
+## 1️⃣ Game Overview
 
----
+**Knockout** is a fast-paced, competitive **card battle royale** game.
 
-## 1. Game Overview
+* **4–8 players per match**
+* Each match is called a **Session**
+* Players **stake once**, then play instantly
+* **No gas per move**
+* **No waiting turns**
+* **Winner takes the pot**
 
-**Knockout** is a fast-paced, multiplayer card battle game.
-
-* **Players per match:** 4–8
-* **Match length:** ~5–8 minutes
-* **Game type:** Skill + strategy + bluff
-* **Winner:** Last player standing (or highest health at timeout)
-
-Each match is called a **Session**.
-Players stake once, play instantly, and the winner takes the prize.
+Think **PUBG / Free Fire**, but instead of guns — **cards, bluffing, and split-second decisions**.
 
 ---
 
-## 2. Objective
+## 2️⃣ Entry & Match Setup
 
-Your goal is simple:
-
-> **Eliminate all other players and be the last one standing.**
-
-If the match timer expires:
-
-* The player with the **highest Health** wins.
-* If tied, the player with **more cards remaining** wins.
-
----
-
-## 3. Match Entry
-
-### Joining a Match
+### 🎟️ Joining a Match
 
 1. Player selects a match room (example: **5 USDC entry**).
-2. Entry fee is locked at match start.
-3. No additional deposits or withdrawals during the match.
+2. Player clicks **"Join Match"**.
+3. Funds are locked once at match start.
+4. A **game session** is created.
+5. Players **cannot add or remove funds mid-game**.
 
-This ensures:
-
-* Fairness
-* No mid-game advantage
-* No pay-to-win behavior
+👉 This ensures fairness and prevents pay-to-win behavior.
 
 ---
 
-## 4. Player Stats
+## 3️⃣ Objective (How to Win)
 
-Each player starts with:
+* Be the **last player with Health remaining**.
+* If the session time expires:
 
-| Stat             | Value            |
-| ---------------- | ---------------- |
-| ❤️ Health        | 20 HP            |
-| 🃏 Starting Hand | 5 cards          |
-| 🔁 Draw Rate     | 1 card per round |
-| ⏱️ Action Time   | 10–15 seconds    |
+  * Player with the **highest Health** wins.
 
 ---
 
-## 5. Card Types
+## 4️⃣ Player Stats (Starting State)
+
+Each player begins with:
+
+* ❤️ **Health:** 20 HP
+* 🃏 **Hand Size:** 5 cards
+* 🔁 **Draw Rate:** 1 card per round
+
+---
+
+## 5️⃣ Card Types
 
 ### 🔴 Attack Cards
-
-Used to damage opponents.
 
 * **Strike** → Deal 3 damage
 * **Heavy Hit** → Deal 5 damage
 
----
-
 ### 🟢 Defense Cards
 
-Used to protect yourself.
-
-* **Shield** → Block up to 3 damage
-* **Reflect** → Reflect damage back to attacker
-
----
+* **Shield** → Block 3 damage
+* **Reflect** → Return damage to attacker
 
 ### 🟡 Trick Cards
 
-Used to disrupt opponents.
-
 * **Steal** → Take 1 random card from an opponent
-* **Swap** → Swap hands with a random opponent
-* **Skip** → Target opponent skips next round
-
----
+* **Swap** → Exchange hands with a random player
+* **Skip** → Skip an opponent's next round
 
 ### 🔵 Special Cards (Rare)
 
-High-risk, high-reward plays.
-
-* **All-In** → Double the damage of your next attack
-* **Second Chance** → Survive lethal damage with 1 HP (once per match)
+* **All-In** → Double your next attack
+* **Second Chance** → Survive lethal damage with 1 HP
 
 ---
 
-## 6. Game Flow
+## 6️⃣ Core Game Flow (Normal Rounds)
 
-### Round Structure
+### ⏱️ Each Round (10–15 seconds)
 
-Each round follows this sequence:
+1. All players **secretly select 1 card**.
+2. Timer ends.
+3. Cards are **revealed simultaneously**.
+4. Effects resolve automatically.
+5. Health updates instantly.
+6. Eliminated players are removed.
 
-1. ⏱️ Countdown starts (10–15 seconds)
-2. All players **secretly select 1 card**
-3. Timer ends
-4. Cards are **revealed simultaneously**
-5. Effects resolve automatically
-6. Health and status update instantly
-7. Eliminated players are removed
-
-There is **no turn order** — everyone plays at the same time.
-
----
-
-## 7. Card Resolution Rules
-
-* All actions resolve **simultaneously**
-* Defense applies before damage
-* Eliminated players do not resolve future effects
-* Chain effects resolve in priority order:
-
-  1. Defense
-  2. Attacks
-  3. Tricks
-  4. Specials
+⚡ No turn order.
+⚡ No waiting.
+⚡ Pure pressure.
 
 ---
 
-## 8. Elimination Rules
+## 7️⃣ Elimination Rules
 
-A player is eliminated when:
+* If a player's **Health ≤ 0**, they are eliminated.
+* Eliminated players:
 
-* Health reaches **0 or below**
-* They fail to submit an action before timeout twice
-
-Eliminated players:
-
-* Lose their stake
-* Cannot re-enter the match
-* May spectate until the end
+  * Lose their stake
+  * Stop playing
+  * Can spectate the rest of the match
 
 ---
 
-## 9. Disconnections & Timeouts
+## 8️⃣ 🔥 FINAL KNOCKOUT ROUND (Signature Feature)
+
+When **only 2 players remain**, the game enters **Final Knockout Mode**.
+
+### ⚔️ Final Knockout Rules
+
+Both remaining players:
+
+* Draw **3 cards**
+* Timer reduces to **5 seconds**
+* **All attack damage is doubled**
+* **Defense cards block only 50% damage**
+
+### 💥 Why this matters
+
+* Creates a **heart-pounding finish**
+* Eliminates slow stalemates
+* Produces **"I almost won" moments**
+* Generates **clip-worthy endings**
+* Feels like the **final circle** in battle royale games
+
+This is where legends are made.
+
+---
+
+## 9️⃣ 🧠 Skill Signal – Round History Log
+
+To prove the game is **skill-based**, not pure luck:
+
+### 📜 Round History Log
+
+Players can view:
+
+* Cards played each round
+* Damage dealt
+* Blocks and reflects
+* Player eliminations
+
+### Why this matters
+
+* Enables **strategy**
+* Encourages **prediction and adaptation**
+* Helps players learn opponents' playstyles
+* Gives judges clear evidence of skill expression
+
+No added UI complexity — huge credibility.
+
+---
+
+## 🔟 Disconnection & Fair Play
 
 * If a player disconnects:
 
-  * Last submitted action is used
-* If no action is submitted:
+  * Their **last valid action** is used, OR
+  * They **auto-fold** after timeout
+* Deck shuffling is provably fair
+* No player can:
 
-  * Player auto-plays a **Pass**
-* Repeated timeouts may result in elimination
-
-This keeps the match flowing and fair.
+  * Change cards
+  * Modify health
+  * Inject funds mid-session
 
 ---
 
-## 10. End of Match
+## 1️⃣1️⃣ End of Game & Rewards
 
-The match ends when:
+The game ends when:
 
-* Only **one player remains**, OR
-* The match timer expires
+* One player remains, OR
+* Time expires
 
-### Winner Rewards
+### 🏆 Rewards
 
 * Winner receives:
 
-  * Total match pool
+  * Total pooled stake
   * Minus a small platform fee
-* Rewards are settled instantly at match end
+* Settlement happens **once**, at the end of the session
 
 ---
 
-## 11. Fair Play & Security
+## 1️⃣2️⃣ Why Knockout Is Fun
 
-* Cards are shuffled fairly
-* No card, health, or stake manipulation
-* No mid-game payments
-* No advantage from spending more money
-
-Every match starts equal.
-
----
-
-## 12. Why Knockout Is Fun
-
-* ⚡ Fast rounds, no waiting
-* 🧠 Strategy, bluffing, and prediction
-* 🎮 Battle royale energy with cards
-* 🏆 Real stakes, real tension
-* 🚫 No wallet popups, no gas per move
+🔥 Ultra-fast rounds
+🧠 Skill + bluff + timing
+⚡ No gas, no delays
+🏆 Real stakes, real tension
+🎮 Battle royale intensity with cards
 
 ---
 
-## 13. Simple Explanation (For Anyone)
+## 1️⃣3️⃣ Simple Explanation (Non-Blockchain)
 
-> "Everyone pays once, plays super fast, and the last player alive wins the pot."
+> "Everyone pays once, plays super fast with cards, and the last player standing wins the pot — no waiting, no fees."
+
+---
