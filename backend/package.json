@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "knockout-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Knockout - Card Battle Royale Game Backend",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

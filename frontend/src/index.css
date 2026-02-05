@@ -1,0 +1,315 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* LAST HAND OS - Neo-Brutalist Design System
+   Colors: Jet Black, Cream, Acid Yellow
+   Style: Thick borders, hard shadows, no gradients
+*/
+
+@layer base {
+  :root {
+    /* Core Colors - Neo-Brutalist Palette */
+    --background: 48 20% 95%;
+    --foreground: 0 0% 0%;
+
+    --card: 48 20% 95%;
+    --card-foreground: 0 0% 0%;
+
+    --popover: 48 20% 95%;
+    --popover-foreground: 0 0% 0%;
+
+    /* Acid Yellow - Primary Action Color */
+    --primary: 68 100% 50%;
+    --primary-foreground: 0 0% 0%;
+
+    /* Off-white/Cream - Secondary */
+    --secondary: 48 20% 90%;
+    --secondary-foreground: 0 0% 0%;
+
+    --muted: 48 10% 85%;
+    --muted-foreground: 0 0% 30%;
+
+    /* Accent - Acid Yellow */
+    --accent: 68 100% 50%;
+    --accent-foreground: 0 0% 0%;
+
+    /* Destructive - Bold Red */
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success - Bold Green */
+    --success: 120 100% 35%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning - Orange */
+    --warning: 35 100% 50%;
+    --warning-foreground: 0 0% 0%;
+
+    --border: 0 0% 0%;
+    --input: 0 0% 0%;
+    --ring: 68 100% 50%;
+
+    --radius: 0;
+
+    /* Custom brutalist variables */
+    --brutal-shadow: 4px 4px 0px hsl(0 0% 0%);
+    --brutal-shadow-sm: 2px 2px 0px hsl(0 0% 0%);
+    --brutal-shadow-lg: 6px 6px 0px hsl(0 0% 0%);
+    --brutal-shadow-accent: 4px 4px 0px hsl(68 100% 50%);
+    --brutal-border: 3px solid hsl(0 0% 0%);
+    --brutal-border-thick: 4px solid hsl(0 0% 0%);
+
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 48 20% 95%;
+    --sidebar-primary: 68 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 68 100% 50%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 48 20% 95%;
+    --sidebar-ring: 68 100% 50%;
+  }
+
+  /* Dark mode - Inverted brutalism */
+  .dark {
+    --background: 0 0% 5%;
+    --foreground: 48 20% 95%;
+
+    --card: 0 0% 8%;
+    --card-foreground: 48 20% 95%;
+
+    --popover: 0 0% 8%;
+    --popover-foreground: 48 20% 95%;
+
+    --primary: 68 100% 50%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 48 20% 95%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 48 10% 60%;
+
+    --accent: 68 100% 50%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 48 20% 95%;
+    --input: 48 20% 95%;
+    --ring: 68 100% 50%;
+
+    --brutal-shadow: 4px 4px 0px hsl(48 20% 95%);
+    --brutal-shadow-sm: 2px 2px 0px hsl(48 20% 95%);
+    --brutal-shadow-lg: 6px 6px 0px hsl(48 20% 95%);
+    --brutal-shadow-accent: 4px 4px 0px hsl(68 100% 50%);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-bold tracking-tight uppercase;
+  }
+}
+
+@layer components {
+  /* Brutalist Button Base */
+  .brutal-btn {
+    @apply inline-flex items-center justify-center font-bold uppercase tracking-wide
+           border-[3px] border-foreground bg-background text-foreground
+           transition-all duration-75;
+    box-shadow: var(--brutal-shadow);
+  }
+
+  .brutal-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px hsl(var(--foreground));
+  }
+
+  .brutal-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+
+  .brutal-btn-primary {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  /* Brutalist Card */
+  .brutal-card {
+    @apply border-[3px] border-foreground bg-card;
+    box-shadow: var(--brutal-shadow);
+  }
+
+  .brutal-card-accent {
+    @apply border-[3px] border-foreground bg-primary;
+    box-shadow: var(--brutal-shadow);
+  }
+
+  /* Game Card Styling */
+  .game-card {
+    @apply relative border-[4px] border-foreground bg-card p-4
+           transition-all duration-75 cursor-pointer select-none;
+    box-shadow: var(--brutal-shadow-lg);
+  }
+
+  .game-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px hsl(var(--foreground));
+  }
+
+  .game-card.selected {
+    @apply bg-primary;
+    transform: translate(0, -8px);
+    box-shadow: var(--brutal-shadow-lg);
+  }
+
+  /* Health Bar */
+  .health-bar {
+    @apply h-6 border-[3px] border-foreground bg-muted overflow-hidden;
+  }
+
+  .health-bar-fill {
+    @apply h-full bg-success transition-all duration-150;
+  }
+
+  .health-bar-fill.low {
+    @apply bg-destructive;
+  }
+
+  .health-bar-fill.medium {
+    @apply bg-warning;
+  }
+
+  /* Timer Ring */
+  .timer-ring {
+    @apply w-16 h-16 border-[4px] border-foreground rounded-none
+           flex items-center justify-center font-mono font-bold text-2xl;
+  }
+
+  .timer-ring.urgent {
+    @apply bg-destructive text-destructive-foreground;
+    animation: pulse-urgent 0.5s steps(2) infinite;
+  }
+
+  /* Panel Grid */
+  .brutal-panel {
+    @apply border-[3px] border-foreground p-6 bg-background;
+  }
+
+  /* Input styling */
+  .brutal-input {
+    @apply w-full px-4 py-3 border-[3px] border-foreground bg-background
+           font-mono text-lg focus:outline-none focus:ring-0;
+    box-shadow: var(--brutal-shadow-sm);
+  }
+
+  .brutal-input:focus {
+    box-shadow: var(--brutal-shadow-accent);
+  }
+
+  /* Badge */
+  .brutal-badge {
+    @apply inline-flex items-center px-3 py-1 text-sm font-bold uppercase
+           border-[2px] border-foreground;
+  }
+
+  /* Status indicators */
+  .status-dot {
+    @apply w-3 h-3 border-2 border-foreground;
+  }
+
+  .status-dot.online {
+    @apply bg-success;
+  }
+
+  .status-dot.offline {
+    @apply bg-muted;
+  }
+
+  .status-dot.in-game {
+    @apply bg-primary;
+    animation: pulse-status 1s steps(2) infinite;
+  }
+}
+
+@layer utilities {
+  /* Text utilities */
+  .text-brutal-xl {
+    @apply text-5xl md:text-7xl lg:text-8xl font-display font-bold uppercase tracking-tighter;
+  }
+
+  .text-brutal-lg {
+    @apply text-3xl md:text-5xl font-display font-bold uppercase tracking-tight;
+  }
+
+  .text-brutal-md {
+    @apply text-xl md:text-2xl font-display font-bold uppercase;
+  }
+
+  /* Mono text for data */
+  .text-mono {
+    @apply font-mono tracking-tight;
+  }
+
+  /* No transition - snappy */
+  .no-ease {
+    transition-timing-function: steps(1);
+  }
+}
+
+/* Keyframe animations - Snappy, no easing */
+@keyframes pulse-urgent {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes shake-brutal {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes slide-up-brutal {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes flash-brutal {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: hsl(var(--primary)); }
+}
+
+.animate-shake {
+  animation: shake-brutal 0.2s steps(4);
+}
+
+.animate-slide-up {
+  animation: slide-up-brutal 0.2s steps(4) forwards;
+}
+
+.animate-flash {
+  animation: flash-brutal 0.3s steps(2);
+}
