@@ -84,8 +84,10 @@
  
  export interface UserProfile {
    id: string;
+   email?: string;
    ensName: string;
    displayName: string;
+   avatar?: string;
    avatarUrl?: string;
    totalMatches: number;
    wins: number;
@@ -98,5 +100,7 @@
      soundEnabled: boolean;
      notifications: boolean;
    };
-   pastMatches: MatchResult[];
+   pastMatches?: MatchResult[];
+   provider?: string;
+   createdAt: Date;
  }

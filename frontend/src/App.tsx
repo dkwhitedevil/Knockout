@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GameProvider } from "./contexts/GameContext";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
+import AuthCallback from "./pages/AuthCallback";
 import Lobby from "./pages/Lobby";
 import Arena from "./pages/Arena";
 import Profile from "./pages/Profile";
@@ -20,10 +21,11 @@ const App = () => (
       <GameProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/lobby" element={<Lobby />} />
             <Route path="/arena" element={<Arena />} />
             <Route path="/profile" element={<Profile />} />

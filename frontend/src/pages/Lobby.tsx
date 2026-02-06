@@ -3,7 +3,9 @@
  import { motion } from 'framer-motion';
  import { BrutalButton } from '@/components/ui/BrutalButton';
  import { BrutalCard } from '@/components/ui/BrutalCard';
- import { useGame } from '@/contexts/GameContext';
+import { useGame } from '@/contexts/GameContext';
+import EnsProfile from '@/components/ens/EnsProfile';
+import JoinByEns from '@/components/game/JoinByEns';
  
  export default function Lobby() {
    const navigate = useNavigate();
@@ -144,51 +146,58 @@
            </div>
  
            {/* Sidebar */}
-           <div className="lg:w-80 space-y-4">
-             <BrutalCard variant="dark" className="p-6">
-               <h3 className="text-lg font-bold uppercase mb-4">HOW IT WORKS</h3>
-               <div className="space-y-4 text-sm font-mono">
-                 <div className="flex gap-3">
-                   <span className="w-6 h-6 bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">1</span>
-                   <span>Join match & lock entry fee</span>
-                 </div>
-                 <div className="flex gap-3">
-                   <span className="w-6 h-6 bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">2</span>
-                   <span>Play rounds instantly</span>
-                 </div>
-                 <div className="flex gap-3">
-                   <span className="w-6 h-6 bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">3</span>
-                   <span>Winner settled on-chain</span>
-                 </div>
-               </div>
-             </BrutalCard>
- 
-             <BrutalCard className="p-6">
-               <h3 className="text-lg font-bold uppercase mb-4">YOUR STATS</h3>
-               <div className="grid grid-cols-2 gap-4">
-                 <div>
-                   <p className="text-xs font-mono opacity-50">MATCHES</p>
-                   <p className="text-2xl font-bold">{user.totalMatches}</p>
-                 </div>
-                 <div>
-                   <p className="text-xs font-mono opacity-50">WIN RATE</p>
-                   <p className="text-2xl font-bold">
-                     {user.totalMatches > 0 
-                       ? Math.round((user.wins / user.totalMatches) * 100) 
-                       : 0}%
-                   </p>
-                 </div>
-                 <div>
-                   <p className="text-xs font-mono opacity-50">EARNINGS</p>
-                   <p className="text-2xl font-bold font-mono">${user.totalEarnings}</p>
-                 </div>
-                 <div>
-                   <p className="text-xs font-mono opacity-50">SPENT</p>
-                   <p className="text-2xl font-bold font-mono">${user.totalSpent}</p>
-                 </div>
-               </div>
-             </BrutalCard>
-           </div>
+          <div className="lg:w-80 space-y-4">
+            <BrutalCard className="p-4">
+              <EnsProfile />
+              <div className="mt-4">
+                <JoinByEns />
+              </div>
+            </BrutalCard>
+
+            <BrutalCard variant="dark" className="p-6">
+              <h3 className="text-lg font-bold uppercase mb-4">HOW IT WORKS</h3>
+              <div className="space-y-4 text-sm font-mono">
+                <div className="flex gap-3">
+                  <span className="w-6 h-6 bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">1</span>
+                  <span>Join match & lock entry fee</span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-6 h-6 bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">2</span>
+                  <span>Play rounds instantly</span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-6 h-6 bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">3</span>
+                  <span>Winner settled on-chain</span>
+                </div>
+              </div>
+            </BrutalCard>
+
+            <BrutalCard className="p-6">
+              <h3 className="text-lg font-bold uppercase mb-4">YOUR STATS</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs font-mono opacity-50">MATCHES</p>
+                  <p className="text-2xl font-bold">{user.totalMatches}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-mono opacity-50">WIN RATE</p>
+                  <p className="text-2xl font-bold">
+                    {user.totalMatches > 0 
+                      ? Math.round((user.wins / user.totalMatches) * 100) 
+                      : 0}%
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-mono opacity-50">EARNINGS</p>
+                  <p className="text-2xl font-bold font-mono">${user.totalEarnings}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-mono opacity-50">SPENT</p>
+                  <p className="text-2xl font-bold font-mono">${user.totalSpent}</p>
+                </div>
+              </div>
+            </BrutalCard>
+          </div>
          </div>
        </main>
  

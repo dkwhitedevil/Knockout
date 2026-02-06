@@ -1,219 +1,189 @@
- import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
- import { 
-   Player, 
-   Match, 
-   GameCard, 
-   SessionWallet, 
-   UserProfile,
-   MatchStatus 
- } from '@/lib/gameTypes';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import {
+  UserProfile,
+  Match,
+  MatchStatus,
+  SessionWallet,
+  GameCard,
+  Player,
+} from '@/lib/gameTypes';
 
-interface GameState {
+type GameContextValue = {
   user: UserProfile | null;
-  session: SessionWallet | null;
-  currentMatch: Match | null;
-  availableMatches: Match[];
   isAuthenticated: boolean;
   isLoading: boolean;
-}
-
-interface GameActions {
-  login: (provider: 'google' | 'apple') => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  availableMatches: Match[];
   createMatch: (entryFee: number, maxPlayers: number) => Promise<Match>;
-  joinMatch: (matchId: string) => Promise<void>;
-  leaveMatch: () => void;
-  playCard: (card: GameCard, targetId?: string) => void;
-  startMatch: () => void;
-  settleMatch: () => Promise<void>;
+  joinMatch: (matchId: string) => Promise<Match | null>;
+  startMatch: (matchId: string) => Promise<void>;
+  leaveMatch: (matchId: string) => Promise<void>;
+  playCard: (matchId: string, card: GameCard) => Promise<void>;
+  settleMatch: (matchId: string) => Promise<void>;
+  session: SessionWallet | null;
+  currentMatch: Match | null;
+};
+
+const GameContext = createContext<GameContextValue | undefined>(undefined);
+
+function readMockUser(): UserProfile | null {
+  try {
+    const raw = localStorage.getItem('mock_user');
+    return raw ? (JSON.parse(raw) as UserProfile) : null;
+  } catch {
+    return null;
+  }
 }
 
-const GameContext = createContext<(GameState & GameActions) | null>(null);
-
-export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [session, setSession] = useState<SessionWallet | null>(null);
-  const [currentMatch, setCurrentMatch] = useState<Match | null>(null);
-  const [availableMatches, setAvailableMatches] = useState<Match[]>([]);
+export const GameProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+  const [user, setUser] = useState<UserProfile | null>(() => readMockUser());
   const [isLoading, setIsLoading] = useState(false);
+  const [availableMatches, setAvailableMatches] = useState<Match[]>([]);
+  const [currentMatch, setCurrentMatch] = useState<Match | null>(null);
+  const [session, setSession] = useState<SessionWallet | null>(null);
 
-  const isAuthenticated = !!user;
-
-  // zkLogin authentication
-  const login = useCallback(async (provider: 'google' | 'apple') => {
-    setIsLoading(true);
-    // In production: zkLogin flow with Sui
-    // TODO: Implement actual zkLogin authentication
-    setIsLoading(false);
+  useEffect(() => {
+    const listener = (e: Event) => {
+      const detail = (e as CustomEvent).detail as UserProfile | null;
+      setUser(detail ?? readMockUser());
+    };
+    window.addEventListener('mockAuthChange', listener);
+    return () => window.removeEventListener('mockAuthChange', listener);
   }, []);
- 
-   const logout = useCallback(() => {
-     setUser(null);
-     setSession(null);
-     setCurrentMatch(null);
-   }, []);
- 
-   const createMatch = useCallback(async (entryFee: number, maxPlayers: number): Promise<Match> => {
-     setIsLoading(true);
-    
-    if (!user) {
+
+  const logout = async () => {
+    localStorage.removeItem('mock_user');
+    setUser(null);
+    window.dispatchEvent(new CustomEvent('mockAuthChange', { detail: null }));
+  };
+
+  const createMatch = async (entryFee: number, maxPlayers: number) => {
+    setIsLoading(true);
+    try {
+      const id = `m_${Date.now().toString(36)}`;
+      const match: Match = {
+        id,
+        entryFee,
+        prizePool: entryFee * maxPlayers,
+        players: user
+          ? [
+              {
+                id: user.id,
+                ensName: user.ensName,
+                displayName: user.displayName,
+                avatarUrl: user.avatarUrl,
+                health: 100,
+                maxHealth: 100,
+                cards: [],
+                isConnected: true,
+              } as Player,
+            ]
+          : [],
+        minPlayers: 2,
+        maxPlayers,
+        currentRound: 0,
+        totalRounds: 3,
+        status: 'WAITING' as MatchStatus,
+        roundTimeLimit: 30,
+        createdAt: new Date(),
+      };
+      setAvailableMatches((s) => [match, ...s]);
+      return match;
+    } finally {
       setIsLoading(false);
-      throw new Error('User must be authenticated to create a match');
     }
-    
-    const newMatch: Match = {
-      id: `match-${Date.now()}`,
-      entryFee,
-      prizePool: entryFee,
-      players: [{
+  };
+
+  const joinMatch = async (matchId: string) => {
+    setIsLoading(true);
+    try {
+      const match = availableMatches.find((m) => m.id === matchId) ?? null;
+      if (!match || !user) return null;
+      if (match.players.find((p) => p.id === user.id)) return match;
+      const player: Player = {
         id: user.id,
         ensName: user.ensName,
         displayName: user.displayName,
+        avatarUrl: user.avatarUrl,
         health: 100,
         maxHealth: 100,
         cards: [],
         isConnected: true,
-      }],
-      minPlayers: 4,
-      maxPlayers,
-      currentRound: 0,
-      totalRounds: 5,
-      status: 'WAITING',
-      roundTimeLimit: 15,
-      createdAt: new Date(),
-    };
-    
-    // TODO: Create session wallet and lock funds on-chain
-    const newSession: SessionWallet = {
-      id: `session-${Date.now()}`,
-      userId: user.id,
-      lockedAmount: entryFee,
-      balance: entryFee,
-      permissions: ['PLAY_CARDS', 'AUTO_FOLD', 'RECEIVE_REWARDS'],
-      status: 'ACTIVE',
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 3600000),
-    };
-    setSession(newSession);
-    setCurrentMatch(newMatch);
-    setAvailableMatches(prev => [...prev, newMatch]);
-    setIsLoading(false);
-     
-     return newMatch;
-   }, [user]);
- 
-   const joinMatch = useCallback(async (matchId: string) => {
-     setIsLoading(true);
-    
-    const match = availableMatches.find(m => m.id === matchId);
-    if (!match || !user) {
+      };
+      const updated: Match = { ...match, players: [...match.players, player] };
+      setAvailableMatches((s) => s.map((m) => (m.id === matchId ? updated : m)));
+      return updated;
+    } finally {
       setIsLoading(false);
-      return;
     }
-    
-    const playerData: Player = {
-      id: user.id,
-      ensName: user.ensName,
-      displayName: user.displayName,
-      health: 100,
-      maxHealth: 100,
-      cards: [],
-      isConnected: true,
-    };
-    
-    const updatedMatch = {
-      ...match,
-      players: [...match.players, playerData],
-      prizePool: match.prizePool + match.entryFee,
-    };
-    
-    // TODO: Create session wallet and lock funds on-chain
-    const newSession: SessionWallet = {
-      id: `session-${Date.now()}`,
-      userId: user.id,
-      lockedAmount: match.entryFee,
-      balance: match.entryFee,
-      permissions: ['PLAY_CARDS', 'AUTO_FOLD', 'RECEIVE_REWARDS'],
-      status: 'ACTIVE',
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 3600000),
-    };
-    setSession(newSession);
-    setCurrentMatch(updatedMatch);
-    setAvailableMatches(prev => 
-      prev.map(m => m.id === matchId ? updatedMatch : m)
-    );
-    setIsLoading(false);
-   }, [availableMatches, user]);
- 
-   const leaveMatch = useCallback(() => {
-     if (session) {
-       // Refund session wallet (mock)
-       setSession(null);
-     }
-     setCurrentMatch(null);
-   }, [session]);
- 
-   const playCard = useCallback((card: GameCard, targetId?: string) => {
-     if (!currentMatch || !user) return;
-     
-     // Update player's selected card
-     setCurrentMatch(prev => {
-       if (!prev) return null;
-       return {
-         ...prev,
-         players: prev.players.map(p => 
-           p.id === user.id ? { ...p, selectedCard: card } : p
-         ),
-       };
-     });
-   }, [currentMatch, user]);
- 
-   const startMatch = useCallback(() => {
-     if (!currentMatch) return;
-     setCurrentMatch(prev => prev ? { ...prev, status: 'IN_PROGRESS', currentRound: 1 } : null);
-   }, [currentMatch]);
- 
-   const settleMatch = useCallback(async () => {
-     if (!currentMatch || !user) return;
-     setIsLoading(true);
-     
-    // TODO: Implement Sui settlement on-chain
-    
-    // Close session
-    setSession(prev => prev ? { ...prev, status: 'CLOSED' } : null);
-    setCurrentMatch(prev => prev ? { ...prev, status: 'COMPLETED', winnerId: user.id } : null);
-    setIsLoading(false);
-  }, [currentMatch, user]);
-
-  const value = {
-    user,
-    session,
-    currentMatch,
-    availableMatches,
-    isAuthenticated,
-    isLoading,
-    login,
-    logout,
-    createMatch,
-    joinMatch,
-    leaveMatch,
-    playCard,
-    startMatch,
-    settleMatch,
   };
 
-  return (
-    <GameContext.Provider value={value}>
-      {children}
-    </GameContext.Provider>
-  );
+  const startMatch = async (matchId: string) => {
+    const match = availableMatches.find((m) => m.id === matchId);
+    if (!match) return;
+    const updated: Match = { ...match, status: 'IN_PROGRESS' } as Match;
+    setAvailableMatches((s) => s.map((m) => (m.id === matchId ? updated : m)));
+    setCurrentMatch(updated);
+  };
+
+  const leaveMatch = async (matchId: string) => {
+    if (!user) return;
+    const match = availableMatches.find((m) => m.id === matchId);
+    if (!match) return;
+    const updatedPlayers = match.players.filter((p) => p.id !== user.id);
+    let updated: Match;
+    if (updatedPlayers.length === 0) {
+      updated = { ...match, status: 'CANCELLED', players: [] } as Match;
+    } else {
+      updated = { ...match, players: updatedPlayers } as Match;
+    }
+    setAvailableMatches((s) => s.map((m) => (m.id === matchId ? updated : m)));
+    if (currentMatch?.id === matchId) setCurrentMatch(null);
+  };
+
+  const playCard = async (_matchId: string, _card: GameCard) => {
+    // Local simulation stub — no-op for now
+    return;
+  };
+
+  const settleMatch = async (matchId: string) => {
+    const match = availableMatches.find((m) => m.id === matchId) ?? currentMatch;
+    if (!match) return;
+    const updated: Match = { ...match, status: 'COMPLETED' } as Match;
+    setAvailableMatches((s) => s.map((m) => (m.id === matchId ? updated : m)));
+    setCurrentMatch(null);
+    // update mock user stats
+    if (user) {
+      const wins = user.wins + 0;
+      const totalMatches = user.totalMatches + 1;
+      const updatedUser: UserProfile = { ...user, wins, totalMatches } as UserProfile;
+      setUser(updatedUser);
+      localStorage.setItem('mock_user', JSON.stringify(updatedUser));
+      window.dispatchEvent(new CustomEvent('mockAuthChange', { detail: updatedUser }));
+    }
+  };
+
+  const value: GameContextValue = {
+    user,
+    isAuthenticated: !!user,
+    isLoading,
+    logout,
+    availableMatches,
+    createMatch,
+    joinMatch,
+    startMatch,
+    leaveMatch,
+    playCard,
+    settleMatch,
+    session,
+    currentMatch,
+  };
+
+  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
+};
+
+export function useGame() {
+  const ctx = useContext(GameContext);
+  if (!ctx) throw new Error('useGame must be used within GameProvider');
+  return ctx;
 }
- 
- export function useGame() {
-   const context = useContext(GameContext);
-   if (!context) {
-     throw new Error('useGame must be used within a GameProvider');
-   }
-   return context;
- }
