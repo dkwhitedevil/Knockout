@@ -1,71 +1,83 @@
- import { useState } from 'react';
+import { useState } from 'react';
  import { useNavigate, Link } from 'react-router-dom';
- import { motion } from 'framer-motion';
- import { BrutalButton } from '@/components/ui/BrutalButton';
- import { BrutalCard } from '@/components/ui/BrutalCard';
+import { motion } from 'framer-motion';
+import { BrutalButton } from '@/components/ui/BrutalButton';
+import { BrutalCard } from '@/components/ui/BrutalCard';
 import { useGame } from '@/contexts/GameContext';
-import EnsProfile from '@/components/ens/EnsProfile';
-import JoinByEns from '@/components/game/JoinByEns';
+import { useCurrentAccount } from '@mysten/dapp-kit';
+import { getAllBalances } from '@/lib/suiRpc';
+import { shortenId } from '@/lib/utils';
+import { LobbyWaiting } from '@/components/game/LobbyWaiting';
+import { useEffect} from 'react';
+
  
  export default function Lobby() {
    const navigate = useNavigate();
-   const { user, availableMatches, joinMatch, createMatch, isLoading } = useGame();
+  const { user, availableMatches, joinMatch, createMatch, isLoading, currentMatch, gameState } = useGame();
+  const account = useCurrentAccount();
+
+  const [suiLoading, setSuiLoading] = useState(false);
+  const [suiBalance, setSuiBalance] = useState<number | null>(null);
    const [showCreateModal, setShowCreateModal] = useState(false);
-   const [entryFee, setEntryFee] = useState(10);
+  const [showConnectCard, setShowConnectCard] = useState(false);
+  const [entryFee, setEntryFee] = useState(0.1);
    const [maxPlayers, setMaxPlayers] = useState(4);
+
+  // Auto-navigate to Arena when all players are paid and game starts
+  useEffect(() => {
+    if (
+      gameState?.phase === 'active' &&
+      currentMatch &&
+      gameState.players.every(player => player.hasPaid)
+    ) {
+      // Removed navigation to Arena
+    }
+  }, [gameState?.phase, currentMatch, gameState?.players, navigate]);
  
    const handleCreateMatch = async () => {
      await createMatch(entryFee, maxPlayers);
-     navigate('/arena');
+     // Removed navigation to Arena
    };
  
    const handleJoinMatch = async (matchId: string) => {
      await joinMatch(matchId);
-     navigate('/arena');
+     // Removed navigation to Arena
    };
- 
-   if (!user) {
-     navigate('/login');
-     return null;
-   }
- 
+
+
    return (
      <div className="min-h-screen bg-background flex flex-col">
        {/* Header */}
-       <header className="border-b-[4px] border-foreground p-4">
-         <div className="container mx-auto flex items-center justify-between">
-           <Link to="/">
-             <h1 className="text-2xl font-bold uppercase tracking-tighter">
-               LAST HAND<span className="text-primary">_OS</span>
-             </h1>
-           </Link>
-           
-           <div className="flex items-center gap-4">
-             <Link to="/profile">
-               <div className="flex items-center gap-3 px-4 py-2 border-[3px] border-foreground bg-card shadow-brutal-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
-                 <div className="w-8 h-8 bg-primary border-[2px] border-foreground flex items-center justify-center font-bold">
-                   {user.displayName[0]}
-                 </div>
-                 <div>
-                   <p className="text-sm font-bold uppercase">{user.displayName}</p>
-                   <p className="text-xs font-mono opacity-70">{user.ensName}</p>
-                 </div>
-               </div>
-             </Link>
-           </div>
-         </div>
-       </header>
- 
+      
        {/* Main Content */}
        <main className="flex-1 container mx-auto p-4 py-8">
-         <div className="flex flex-col lg:flex-row gap-8">
+         {/* Show Waiting State if User Joined a Match */}
+         {currentMatch && gameState ? (
+           <div className="max-w-2xl mx-auto">
+             <LobbyWaiting
+               matchId={currentMatch.id}
+               gameState={gameState}
+               isLoading={isLoading}
+               onLeaveMatch={() => {
+                 // TODO: Implement leave match
+               }}
+             />
+           </div>
+         ) : (
+           <div className="flex flex-col lg:flex-row gap-8">
            {/* Matches List */}
            <div className="flex-1">
              <div className="flex items-center justify-between mb-6">
                <h2 className="text-2xl font-bold uppercase">OPEN MATCHES</h2>
                <BrutalButton 
                  variant="primary"
-                 onClick={() => setShowCreateModal(true)}
+                 onClick={() => {
+                   if (!account?.address) {
+                     setShowConnectCard(true);
+                     return;
+                   }
+                   setShowCreateModal(true);
+                 }}
                >
                  + CREATE MATCH
                </BrutalButton>
@@ -84,7 +96,9 @@ import JoinByEns from '@/components/game/JoinByEns';
                        {/* Match Info */}
                        <div className="md:col-span-2">
                          <p className="font-mono text-xs opacity-50 mb-1">MATCH ID</p>
-                         <p className="font-bold uppercase">{match.id}</p>
+                         <p className="font-bold uppercase cursor-help" title={match.id}>
+                           {shortenId(match.id)}
+                         </p>
                        </div>
                        
                        {/* Players */}
@@ -98,7 +112,7 @@ import JoinByEns from '@/components/game/JoinByEns';
                        {/* Entry Fee */}
                        <div>
                          <p className="font-mono text-xs opacity-50 mb-1">ENTRY FEE</p>
-                         <p className="font-mono font-bold text-lg">${match.entryFee}</p>
+                         <p className="font-mono font-bold text-lg">{Number(match.entryFee).toFixed(1)} SUI</p>
                        </div>
                        
                        {/* Join Button */}
@@ -147,12 +161,7 @@ import JoinByEns from '@/components/game/JoinByEns';
  
            {/* Sidebar */}
           <div className="lg:w-80 space-y-4">
-            <BrutalCard className="p-4">
-              <EnsProfile />
-              <div className="mt-4">
-                <JoinByEns />
-              </div>
-            </BrutalCard>
+            
 
             <BrutalCard variant="dark" className="p-6">
               <h3 className="text-lg font-bold uppercase mb-4">HOW IT WORKS</h3>
@@ -174,51 +183,112 @@ import JoinByEns from '@/components/game/JoinByEns';
 
             <BrutalCard className="p-6">
               <h3 className="text-lg font-bold uppercase mb-4">YOUR STATS</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs font-mono opacity-50">MATCHES</p>
-                  <p className="text-2xl font-bold">{user.totalMatches}</p>
+              {user ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs font-mono opacity-50">MATCHES</p>
+                    <p className="text-2xl font-bold">{user.totalMatches}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-mono opacity-50">WIN RATE</p>
+                    <p className="text-2xl font-bold">
+                      {user.totalMatches > 0 
+                        ? Math.round((user.wins / user.totalMatches) * 100) 
+                        : 0}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-mono opacity-50">EARNINGS</p>
+                    <p className="text-2xl font-bold font-mono">${user.totalEarnings}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-mono opacity-50">SPENT</p>
+                    <p className="text-2xl font-bold font-mono">${user.totalSpent}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-mono opacity-50">WIN RATE</p>
-                  <p className="text-2xl font-bold">
-                    {user.totalMatches > 0 
-                      ? Math.round((user.wins / user.totalMatches) * 100) 
-                      : 0}%
-                  </p>
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs font-mono opacity-50">MATCHES</p>
+                    <p className="text-2xl font-bold">—</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-mono opacity-50">WIN RATE</p>
+                    <p className="text-2xl font-bold">—</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-mono opacity-50">EARNINGS</p>
+                    <p className="text-2xl font-bold font-mono">—</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-mono opacity-50">SPENT</p>
+                    <p className="text-2xl font-bold font-mono">—</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-mono opacity-50">EARNINGS</p>
-                  <p className="text-2xl font-bold font-mono">${user.totalEarnings}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-mono opacity-50">SPENT</p>
-                  <p className="text-2xl font-bold font-mono">${user.totalSpent}</p>
-                </div>
+              )}
+                <div className="border-t-[2px] border-foreground/30 mt-4 pt-4">
+                <p className="text-xs font-mono opacity-50">SUI BALANCE (Testnet)</p>
+                <p className="text-lg font-bold">
+                  {suiLoading ? (
+                    <span className="opacity-70 text-xs">Loading…</span>
+                  ) : suiBalance == null ? (
+                    <span className="opacity-70">—</span>
+                  ) : (
+                    `${suiBalance.toFixed(4)} SUI`
+                  )}
+                </p>
               </div>
             </BrutalCard>
           </div>
-         </div>
+           </div>
+         )}
        </main>
  
        {/* Create Match Modal */}
+      {/* Connect Wallet Card (neobrutal) */}
+      {showConnectCard && (
+        <div className="fixed inset-0 bg-foreground/50 flex items-center justify-center p-4 z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.12 }}
+          >
+            <BrutalCard className="w-full max-w-sm p-6">
+              <h3 className="text-xl font-bold uppercase mb-2">Wallet Required</h3>
+              <p className="mb-4 font-mono text-sm opacity-80">Please connect your Sui wallet to create a match.</p>
+              <div className="flex gap-4">
+                <BrutalButton
+                  variant="primary"
+                  className="flex-1"
+                  onClick={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setShowConnectCard(false);
+                  }}
+                >
+                  OK
+                </BrutalButton>
+              </div>
+            </BrutalCard>
+          </motion.div>
+        </div>
+      )}
        {showCreateModal && (
-         <div className="fixed inset-0 bg-foreground/50 flex items-center justify-center p-4 z-50">
+         <div className="fixed inset-0 bg-foreground/50 flex items-center justify-center p-4 z-60">
            <motion.div
              initial={{ opacity: 0, scale: 0.95 }}
              animate={{ opacity: 1, scale: 1 }}
              transition={{ duration: 0.1 }}
            >
-             <BrutalCard className="w-full max-w-md p-8">
+             <BrutalCard className="w-full max-w-4xl p-10">
                <h2 className="text-2xl font-bold uppercase mb-6">CREATE MATCH</h2>
                
                <div className="space-y-6">
                  <div>
                    <label className="block text-sm font-bold uppercase mb-2">
-                     ENTRY FEE (USDC)
+                     ENTRY FEE (SUI)
                    </label>
                    <div className="flex gap-2">
-                     {[5, 10, 25, 50].map((fee) => (
+                     {[0.1, 0.2, 0.3, 0.4].map((fee) => (
                        <button
                          key={fee}
                          onClick={() => setEntryFee(fee)}
@@ -228,7 +298,7 @@ import JoinByEns from '@/components/game/JoinByEns';
                              : 'bg-card hover:bg-muted'
                          }`}
                        >
-                         ${fee}
+                        {fee} SUI
                        </button>
                      ))}
                    </div>
@@ -257,8 +327,8 @@ import JoinByEns from '@/components/game/JoinByEns';
  
                  <div className="p-4 bg-muted border-[2px] border-foreground">
                    <div className="flex justify-between text-sm font-mono">
-                     <span>Prize Pool (if full)</span>
-                     <span className="font-bold">${entryFee * maxPlayers}</span>
+                     <span>Prize Pool : </span>
+                     <span className="font-bold">{(entryFee * maxPlayers).toFixed(2)} SUI</span>
                    </div>
                  </div>
                </div>
@@ -277,7 +347,7 @@ import JoinByEns from '@/components/game/JoinByEns';
                    onClick={handleCreateMatch}
                    disabled={isLoading}
                  >
-                   {isLoading ? 'CREATING...' : 'CREATE →'}
+                   {isLoading ? 'CREATING...' : 'CREATE→'}
                  </BrutalButton>
                </div>
              </BrutalCard>

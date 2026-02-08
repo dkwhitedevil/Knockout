@@ -1,41 +1,102 @@
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAccount } from 'wagmi';
+import { useCurrentAccount } from '@mysten/dapp-kit';
 import { BrutalButton } from '@/components/ui/BrutalButton';
 import { BrutalCard } from '@/components/ui/BrutalCard';
 import Wallet from '@/components/wallets/wallet';
-import EnsProfile from '@/components/ens/EnsProfile';
+import SuiIdentity from '@/components/wallets/SuiIdentity';
 import { useToast } from '@/hooks/use-toast';
+import { getIdentityBySui } from '@/services/identity';
+import { fetchSuiBalance } from '@/lib/suiRpc';
+import UsdcBalance from '@/components/wallets/UsdcBalance';
 
 export default function Landing() {
   const navigate = useNavigate();
   const { isConnected } = useAccount();
+  const suiAccount = useCurrentAccount();
   const { toast } = useToast();
 
-  const handlePlayGame = () => {
-    if (isConnected) {
-      navigate('/lobby');
+  const [landingSuiBalance, setLandingSuiBalance] = useState<number | null>(null);
+  const [landingSuiLoading, setLandingSuiLoading] = useState(false);
+
+  const [showEthPop, setShowEthPop] = useState(false);
+
+  useEffect(() => {
+    // Show pop-in 1s after user has connected their Sui wallet but hasn't connected Ethereum
+    let t: ReturnType<typeof setTimeout> | null = null;
+    if (suiAccount?.address && !isConnected) {
+      console.debug('Landing: Sui connected, checking DB for linked identity', { sui: suiAccount?.address, isConnected });
+      t = setTimeout(async () => {
+        try {
+          const linked = await getIdentityBySui(suiAccount.address);
+          if (linked) {
+            console.debug('Landing: found linked identity in DB, hiding pop-in', linked);
+            setShowEthPop(false);
+          } else {
+            console.debug('Landing: no linked identity, showing pop-in');
+            setShowEthPop(true);
+          }
+        } catch (e) {
+          console.error('Landing: error checking identity', e);
+          setShowEthPop(true);
+        }
+      }, 1000);
     } else {
-      navigate('/login');
+      console.debug('Landing: Hiding ETH pop-in', { sui: suiAccount?.address, isConnected });
+      setShowEthPop(false);
     }
+    return () => {
+      if (t) clearTimeout(t);
+    };
+  }, [suiAccount?.address, isConnected]);
+
+  useEffect(() => {
+    const onLinked = (e: any) => {
+      // close pop-in when identity linked
+      setShowEthPop(false);
+    };
+    window.addEventListener('identity:linked', onLinked as EventListener);
+    return () => window.removeEventListener('identity:linked', onLinked as EventListener);
+  }, []);
+
+  // Load a simple SUI balance to display on the landing page header
+  useEffect(() => {
+    let cancelled = false;
+    if (!suiAccount?.address) {
+      setLandingSuiBalance(null);
+      setLandingSuiLoading(false);
+      return;
+    }
+
+    (async () => {
+      setLandingSuiLoading(true);
+      try {
+        const bal = await fetchSuiBalance(suiAccount.address);
+        if (!cancelled) setLandingSuiBalance(bal);
+      } catch (e) {
+        console.debug('Landing: fetchSuiBalance failed', e);
+        if (!cancelled) setLandingSuiBalance(null);
+      } finally {
+        if (!cancelled) setLandingSuiLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [suiAccount?.address]);
+
+  
+
+  const handlePlayGame = () => {
+      navigate('/lobby');
   };
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b-[4px] border-foreground p-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tighter">
-            Knockout<span className="text-primary"></span>
-          </h1>
-
-          {/* Right side actions */}
-          <div className="flex items-center gap-3">
-            <EnsProfile />
-            {/* Wallet Connect Button */}
-            <Wallet />
-          </div>
-        </div>
-      </header>
+     
 
       {/* Hero */}
       <main className="flex-1 container mx-auto px-4 py-12 md:py-20">

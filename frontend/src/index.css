@@ -107,6 +107,10 @@
     --brutal-shadow-lg: 6px 6px 0px hsl(48 20% 95%);
     --brutal-shadow-accent: 4px 4px 0px hsl(68 100% 50%);
   }
+
+  .font-display {
+    font-family: 'Space Grotesk', sans-serif;
+  }
 }
 
 @layer base {
@@ -241,6 +245,27 @@
   .status-dot.in-game {
     @apply bg-primary;
     animation: pulse-status 1s steps(2) infinite;
+  }
+
+  /* Game Over Page Styling */
+  .game-over {
+    @apply bg-primary text-primary-foreground;
+    box-shadow: var(--brutal-shadow);
+    border: var(--brutal-border-thick);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .game-over-title {
+    @apply text-brutal-xl;
+  }
+
+  .game-over-message {
+    @apply text-brutal-md;
+  }
+
+  .game-over-button {
+    @apply brutal-btn brutal-btn-primary;
   }
 }
 

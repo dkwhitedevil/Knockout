@@ -1,0 +1,36 @@
+.card-image {
+  width: 200px;
+  height: 250px;
+  transition: transform 0.2s ease;
+}
+
+.card-image:hover {
+  transform: scale(1.1); /* Slightly enlarge the image on hover */
+}
+
+.game-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.left-container,
+.right-container {
+  flex: 1;
+  padding: 10px;
+}
+
+.left-container .round {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.right-container .log {
+  font-size: 1.2rem; /* Increase text size */
+  padding: 15px; /* Add more padding */
+  max-height: 90vh; /* Adjust height to fit larger content */
+  overflow-y: auto; /* Ensure scrollability for larger logs */
+  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+}

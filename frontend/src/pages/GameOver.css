@@ -1,0 +1,231 @@
+/* ===== GLOBAL ===== */
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #e9f1ff, #fdfdfd);
+  color: #111;
+}
+
+/* ===== TABLE CONTAINER ===== */
+
+.table {
+  text-align: center;
+  padding: 30px 20px 40px;
+  animation: fadeIn 0.6s ease;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.round {
+  opacity: 0.6;
+  margin-bottom: 26px;
+  font-weight: 600;
+}
+
+/* ===== OPPONENT SEATS ===== */
+
+.opponents {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 50px;
+}
+
+.seat {
+  background: #ffffff;
+  padding: 16px 26px;
+  border-radius: 18px;
+  border: 3px solid #111;
+  box-shadow: 6px 6px 0 #111;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.3s;
+}
+
+.seat:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 10px 10px 0 #111;
+}
+
+.seat.dead {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+/* ===== PLAYER AREA ===== */
+
+.player-area {
+  margin-top: 20px;
+  animation: slideUp 0.5s ease;
+}
+
+.player-area h2 {
+  font-size: 22px;
+  margin-bottom: 14px;
+}
+
+/* ===== CARD HAND ===== */
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* ===== CARD BUTTON ===== */
+
+.cards button {
+  background: linear-gradient(145deg, #ffffff, #f3f6ff);
+  border: 3px solid #111;
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 110px;
+
+  box-shadow: 6px 6px 0 #111;
+  transition: all 0.18s ease;
+}
+
+/* Hover pop effect */
+.cards button:hover:not(:disabled) {
+  transform: translate(-5px, -5px) scale(1.03);
+  box-shadow: 12px 12px 0 #111;
+  background: linear-gradient(145deg, #ffffff, #e8eeff);
+}
+
+/* Click press effect */
+.cards button:active:not(:disabled) {
+  transform: translate(2px, 2px) scale(0.97);
+  box-shadow: 2px 2px 0 #111;
+}
+
+/* Disabled */
+.cards button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0 #111;
+}
+
+/* ===== COLOR TAGS PER CARD TYPE ===== */
+
+.cards button:nth-child(1) { border-color: #ff6b6b; }
+.cards button:nth-child(2) { border-color: #4dabf7; }
+.cards button:nth-child(3) { border-color: #ffd43b; }
+.cards button:nth-child(4) { border-color: #69db7c; }
+.cards button:nth-child(5) { border-color: #b197fc; }
+
+/* ===== LOG PANEL ===== */
+
+.log {
+  margin: 36px auto 0;
+  width: 360px; /* Slightly wider */
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4); /* Gradient background */
+  border-radius: 12px; /* Softer corners */
+  border: 2px solid #ff6f61; /* Bright border color */
+  box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+  padding: 16px 18px; /* Adjusted padding */
+  font-size: 15px; /* Slightly larger font */
+  text-align: left;
+  max-height: 200px; /* Increased height */
+  overflow-y: auto; /* Scrollable for long content */
+  animation: fadeIn 0.6s ease;
+}
+
+.log p {
+  margin: 4px 0;
+  animation: logSlide 0.25s ease;
+}
+
+/* ===== ENHANCED GAME OVER PAGE ===== */
+
+.game-over-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: hsl(0, 0%, 100%); /* White background */
+  color: hsl(0, 0%, 0%); /* Black text */
+  text-align: center;
+}
+
+.game-over-card {
+  background: hsl(0, 0%, 100%); /* White card background */
+  border: 4px solid hsl(0, 0%, 0%); /* Black border */
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 8px 8px 0 hsl(0, 0%, 0%); /* Black shadow */
+  animation: fadeIn 1s ease;
+}
+
+.game-over-title {
+  font-size: 64px;
+  font-weight: 900;
+  color: hsl(60, 4%, 5%)/* Acid Yellow */;
+  margin-bottom: 20px;
+}
+
+.game-over-winner {
+  font-size: 36px;
+  font-weight: bold;
+  color: hsl(0, 0%, 0%); /* Black text */
+  background: hsl(58, 100%, 51%); /* Acid Yellow background */
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: inline-block;
+  text-shadow: none;
+  margin-bottom: 30px;
+}
+
+.game-over-button {
+  background: hsl(0, 0%, 100%); /* White button background */
+  color: hsl(0, 0%, 0%); /* Black text */
+  font-size: 20px;
+  font-weight: bold;
+  padding: 15px 30px;
+  border: 4px solid hsl(68, 100%, 50%); /* Acid Yellow border */
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 8px 8px 0 hsl(68, 100%, 50%);
+}
+
+.game-over-button:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0 hsl(68, 100%, 50%);
+}
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes logSlide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

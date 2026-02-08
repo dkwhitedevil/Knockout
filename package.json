@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@erc7824/nitrolite": "^0.5.3",
+    "ethers": "^6.16.0"
+  }
+}

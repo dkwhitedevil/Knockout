@@ -1,0 +1,103 @@
+Note: The tool simplified the command to ` cd /Users/dineshkumar/Projects/Knockout/backend/knockout_game && sui move test`, and this is the output of running that command instead:
+dineshkumar@MacBook-Air knockout_game %  cd /Users/dineshkumar/Projects/Knockout/backend/knockout_game && sui mo
+ve test
+INCLUDING DEPENDENCY MoveStdlib
+INCLUDING DEPENDENCY Sui
+BUILDING knockout_game
+warning[W09001]: unused alias
+  ┌─ ./tests/game_tests.move:3:36
+  │
+3 │     use sui::test_scenario::{Self, Scenario};
+  │                                    ^^^^^^^^ Unused 'use' of alias 'Scenario'. Consider removing it
+  │
+  = This warning can be suppressed with '#[allow(unused_use)]' applied to the 'module' or module member ('const'
+, 'fun', or 'struct')
+
+warning[W09001]: unused alias
+  ┌─ ./tests/game_tests.move:6:28
+  │
+6 │     use sui::clock::{Self, Clock};
+  │                            ^^^^^ Unused 'use' of alias 'Clock'. Consider removing it
+  │
+  = This warning can be suppressed with '#[allow(unused_use)]' applied to the 'module' or module member ('const'
+, 'fun', or 'struct')
+
+warning[W09012]: unused 'mut' modifiers
+    ┌─ ./tests/game_tests.move:159:17
+    │
+159 │         let mut m = test_scenario::take_shared<Match<SUI>>(&scenario);
+    │             --- ^ The variable 'm' is never used mutably
+    │             │    
+    │             Consider removing the 'mut' declaration here
+    │
+    = This warning can be suppressed with '#[allow(unused_let_mut)]' applied to the 'module' or module member ('
+const', 'fun', or 'struct')
+
+warning[W09012]: unused 'mut' modifiers
+    ┌─ ./tests/game_tests.move:168:17
+    │
+168 │         let mut m2 = test_scenario::take_shared<Match<SUI>>(&scenario);
+    │             --- ^^ The variable 'm2' is never used mutably
+    │             │    
+    │             Consider removing the 'mut' declaration here
+    │
+    = This warning can be suppressed with '#[allow(unused_let_mut)]' applied to the 'module' or module member ('
+const', 'fun', or 'struct')
+
+warning[W09012]: unused 'mut' modifiers
+    ┌─ ./tests/game_tests.move:284:17
+    │
+284 │         let mut m = test_scenario::take_shared<Match<SUI>>(&scenario);
+    │             --- ^ The variable 'm' is never used mutably
+    │             │    
+    │             Consider removing the 'mut' declaration here
+    │
+    = This warning can be suppressed with '#[allow(unused_let_mut)]' applied to the 'module' or module member ('
+const', 'fun', or 'struct')
+
+warning[W09012]: unused 'mut' modifiers
+    ┌─ ./tests/game_tests.move:291:17
+    │
+291 │         let mut m2 = test_scenario::take_shared<Match<SUI>>(&scenario);
+    │             --- ^^ The variable 'm2' is never used mutably
+    │             │    
+    │             Consider removing the 'mut' declaration here
+    │
+    = This warning can be suppressed with '#[allow(unused_let_mut)]' applied to the 'module' or module member ('
+const', 'fun', or 'struct')
+
+error[E06001]: unused value without 'drop'
+    ┌─ ./tests/game_tests.move:296:37
+    │
+290 │         let cap = test_scenario::take_from_sender<SessionCap>(&scenario);
+    │             ---                                   ---------- The type 'knockout_game::game::SessionCap' do
+es not have the ability 'drop'
+    │             │                                      
+    │             The local variable 'cap' still contains a value. The value does not have the 'drop' ability an
+d must be consumed before the function returns
+    ·
+296 │         test_scenario::end(scenario);
+    │                                     ^ Invalid return
+    │
+    ┌─ ./sources/knockout_game.move:30:19
+    │
+ 30 │     public struct SessionCap has key {
+    │                   ---------- To satisfy the constraint, the 'drop' ability would need to be added here
+
+warning[W02021]: duplicate alias
+  ┌─ ./sources/knockout_game.move:3:23
+  │
+3 │     use sui::object::{Self, UID, ID};
+  │                       ^^^^ Unnecessary alias 'object' for module 'sui::object'. This alias is provided by de
+fault
+  │
+  = This warning can be suppressed with '#[allow(duplicate_alias)]' applied to the 'module' or module member ('c
+onst', 'fun', or 'struct')
+
+warning[W02021]: duplicate alias
+  ┌─ ./sources/knockout_game.move:3:29
+  │
+3 │     use sui::object::{Self, UID, ID};
+  │                             ^^^ Unnecessary alias 'UID' for module member 'sui::object::UID'. This alias is 
+provided by default
+

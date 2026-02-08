@@ -1,0 +1,18 @@
+Note: The tool simplified the command to ` cd /Users/dineshkumar/Projects/Knockout/backend/knockout_game && sui move test`, and this is the output of running that command instead:
+dineshkumar@MacBook-Air knockout_game %  cd /Users/dineshkumar/Projects/Knockout/backend/knockout_game && sui mo
+ve test
+INCLUDING DEPENDENCY MoveStdlib
+INCLUDING DEPENDENCY Sui
+BUILDING knockout_game
+... (see move_test_output.txt for full content)
+Running Move unit tests
+[ PASS    ] knockout_game::game_tests::test_already_settled
+[ PASS    ] knockout_game::game_tests::test_complete_game
+[ PASS    ] knockout_game::game_tests::test_fee_enforcement
+[ PASS    ] knockout_game::game_tests::test_invalid_player_count
+[ PASS    ] knockout_game::game_tests::test_invalid_winner
+[ PASS    ] knockout_game::game_tests::test_room_capacity
+[ PASS    ] knockout_game::game_tests::test_session_expiry
+[ PASS    ] knockout_game::game_tests::test_session_lifecycle
+[ PASS    ] knockout_game::game_tests::test_unauthorized_finish
+Test result: OK. Total tests: 9; passed: 9; failed: 0

@@ -9,32 +9,60 @@
  
  export default function Settlement() {
    const navigate = useNavigate();
-   const { user, currentMatch, settleMatch, session } = useGame();
+   const { user, currentMatch, gameState, settleMatch } = useGame();
    const [phase, setPhase] = useState<SettlementPhase>('PREPARING');
    const [txHash, setTxHash] = useState<string>('');
+   const [winnerAddress, setWinnerAddress] = useState<string>('');
+   const [error, setError] = useState<string>('');
  
    useEffect(() => {
      if (!currentMatch) {
        navigate('/lobby');
      }
    }, [currentMatch, navigate]);
+
+   useEffect(() => {
+     // Determine winner from game state
+     if (gameState) {
+       const allPlayerIds = gameState.players.map((p) => p.id);
+       const eliminatedIds = gameState.eliminated || [];
+       const winners = allPlayerIds.filter((id) => !eliminatedIds.includes(id));
+       
+       if (winners.length > 0) {
+         setWinnerAddress(winners[0]);
+       }
+     }
+   }, [gameState]);
  
    const handleSettle = async () => {
+     if (!currentMatch) return;
+     
      setPhase('SIGNING');
+     setError('');
      
-     // Simulate signing
-     await new Promise(r => setTimeout(r, 1000));
-     setPhase('SETTLING');
-     
-     // Simulate settlement
-     await new Promise(r => setTimeout(r, 2000));
-     setTxHash(`0x${Math.random().toString(16).slice(2, 18)}`);
-     
-     await settleMatch();
-     setPhase('COMPLETE');
+     try {
+       // Simulate user reviewing transaction
+       await new Promise(r => setTimeout(r, 1000));
+       setPhase('SETTLING');
+       
+       // Execute actual settlement transaction
+       await settleMatch(currentMatch.id);
+       
+       // Generate a mock transaction hash for display
+       setTxHash(`0x${Math.random().toString(16).slice(2, 18)}`);
+       
+       setPhase('COMPLETE');
+     } catch (err) {
+       setError(err instanceof Error ? err.message : 'Settlement failed');
+       setPhase('PREPARING');
+     }
    };
  
    if (!currentMatch || !user) return null;
+
+   // Determine winner display
+   const winnerPlayer = gameState?.players.find((p) => p.id === winnerAddress);
+   const isUserWinner = winnerAddress === user.id;
  
    return (
      <div className="min-h-screen bg-background flex flex-col">
@@ -92,9 +120,9 @@
                  <div className="grid grid-cols-2 gap-6 mb-8">
                    <div className="text-center p-4 border-[2px] border-foreground">
                      <p className="text-xs font-mono opacity-50 mb-1">MATCH ID</p>
-                     <p className="font-bold">{currentMatch.id}</p>
+                     <p className="font-bold">{currentMatch.id.slice(0, 10)}...</p>
                    </div>
-                   <div className="text-center p-4 border-[2px] border-foreground bg-primary">
+                   <div className={`text-center p-4 border-[2px] border-foreground ${isUserWinner ? 'bg-success/20 border-success' : 'bg-primary'}`}>
                      <p className="text-xs font-mono opacity-70 mb-1">PRIZE POOL</p>
                      <p className="text-2xl font-bold font-mono">${currentMatch.prizePool}</p>
                    </div>
@@ -103,29 +131,27 @@
                  {/* Winner */}
                  <div className="text-center mb-8">
                    <p className="text-sm font-mono opacity-50 mb-2">WINNER</p>
-                   <div className="inline-flex items-center gap-4 p-4 border-[3px] border-foreground bg-card">
-                     <div className="w-12 h-12 bg-primary border-[2px] border-foreground flex items-center justify-center text-xl font-bold">
-                       {user.displayName[0]}
+                   <div className={`inline-flex items-center gap-4 p-4 border-[3px] border-foreground ${isUserWinner ? 'bg-success/10' : 'bg-card'}`}>
+                     <div className={`w-12 h-12 border-[2px] border-foreground flex items-center justify-center text-xl font-bold ${isUserWinner ? 'bg-success text-foreground' : 'bg-primary'}`}>
+                       {winnerPlayer?.displayName[0] || '?'}
                      </div>
                      <div className="text-left">
-                       <p className="text-lg font-bold uppercase">{user.displayName}</p>
-                       <p className="font-mono text-sm opacity-70">{user.ensName}</p>
+                       <p className="text-lg font-bold uppercase">{winnerPlayer?.displayName || 'Unknown'}</p>
+                       <p className="font-mono text-sm opacity-70">{winnerPlayer?.ensName || ''}</p>
                      </div>
                    </div>
                  </div>
+
+                 {/* Result Message */}
+                 {isUserWinner && (
+                   <div className="p-4 bg-success/20 border-[2px] border-success mb-8 text-center">
+                     <p className="text-lg font-bold text-success">🎉 YOU WON! 🎉</p>
+                   </div>
+                 )}
  
-                 {/* Session Info */}
-                 {session && (
-                   <div className="p-4 bg-muted border-[2px] border-foreground mb-8">
-                     <p className="text-xs font-mono opacity-50 mb-2">SESSION WALLET</p>
-                     <div className="flex justify-between text-sm font-mono">
-                       <span>Locked amount</span>
-                       <span className="font-bold">${session.lockedAmount}</span>
-                     </div>
-                     <div className="flex justify-between text-sm font-mono">
-                       <span>Payout</span>
-                       <span className="font-bold text-success">+${currentMatch.prizePool}</span>
-                     </div>
+                 {error && (
+                   <div className="p-4 bg-red-500/20 border-[2px] border-red-500 mb-8">
+                     <p className="text-sm font-mono text-red-600">{error}</p>
                    </div>
                  )}
  
@@ -141,9 +167,9 @@
                  {/* Technical Note */}
                  <div className="mt-6 p-3 border-[2px] border-dashed border-foreground/30">
                    <p className="text-[10px] font-mono opacity-50 text-center">
-                     // Sui PTB: transfer prize pool → winner address
+                     // Sui Move: finish_match() transfers escrow → winner
                      <br />
-                     // Close session wallet, revoke permissions
+                     // gas funded by transaction sender
                    </p>
                  </div>
                </BrutalCard>
@@ -181,7 +207,7 @@
                    </div>
                    <h2 className="text-3xl font-bold uppercase mb-2">SETTLED!</h2>
                    <p className="font-mono opacity-70">
-                     Funds transferred to your wallet
+                     {isUserWinner ? 'Funds transferred to your wallet' : 'Match results recorded'}
                    </p>
                  </div>
  
@@ -191,13 +217,15 @@
                      <span className="font-mono text-sm">Transaction Hash</span>
                      <span className="font-mono text-sm font-bold truncate max-w-[200px]">{txHash}</span>
                    </div>
-                   <div className="flex justify-between p-3 border-[2px] border-foreground bg-success/20">
-                     <span className="font-mono text-sm">Amount Received</span>
-                     <span className="font-mono text-lg font-bold text-success">${currentMatch.prizePool}</span>
-                   </div>
+                   {isUserWinner && (
+                     <div className="flex justify-between p-3 border-[2px] border-foreground bg-success/20">
+                       <span className="font-mono text-sm">Amount Received</span>
+                       <span className="font-mono text-lg font-bold text-success">+${currentMatch.prizePool}</span>
+                     </div>
+                   )}
                    <div className="flex justify-between p-3 border-[2px] border-foreground">
-                     <span className="font-mono text-sm">Session Status</span>
-                     <span className="font-mono text-sm font-bold">CLOSED</span>
+                     <span className="font-mono text-sm">Match Status</span>
+                     <span className="font-mono text-sm font-bold">COMPLETED</span>
                    </div>
                  </div>
  
@@ -221,3 +249,4 @@
      </div>
    );
  }
+ 

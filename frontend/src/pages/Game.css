@@ -1,0 +1,289 @@
+/* ===== GLOBAL ===== */
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: url('bg.png') no-repeat center center fixed; /* Set the image as background */
+  background-size: cover; /* Ensure the image covers the entire page */
+  color: #fff; /* White text for contrast */
+}
+
+
+/* ===== PAGE LAYOUT (navbar + game) ===== */
+
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== TABLE / GAME AREA ===== */
+
+.table {
+  flex: 1; /* fill remaining height below navbar */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px 20px; /* Comfortable padding */
+  text-align: center;
+  margin: 0 auto; /* Center horizontally */
+  animation: fadeIn 0.6s ease;
+
+  /* Semi-transparent black */
+ 
+  border-radius: 16px; /* Rounded corners */
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+}
+
+/* ===== ROUND TITLE ===== */
+
+.round {
+  font-size: 32px;
+  font-weight: bold;
+  color: #000000;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  margin-bottom: 24px;
+}
+
+/* ===== OPPONENT SEATS ===== */
+
+.opponents {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.seat {
+  
+  padding: 16px 26px;
+  border-radius: 18px;
+  border: 3px solid #111;
+  box-shadow: 6px 6px 0 #111;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.3s;
+}
+
+.seat:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 10px 10px 0 #111;
+}
+
+.seat.dead {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+/* ===== PLAYER AREA ===== */
+
+.player-area {
+  margin-top: 10px;
+  animation: slideUp 0.5s ease;
+}
+
+.player-area h2 {
+  font-size: 22px;
+  margin-bottom: 14px;
+  color: #fb0909; /* Bright yellow color for player name and HP */
+  font-weight: bold; /* Make it stand out */
+}
+
+/* ===== PLAYER BOX STYLING ===== */
+.player-area h2 {
+  color: #ffcc00; /* Bright yellow color for player name and HP */
+  font-weight: bold; /* Make it stand out */
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  padding: 10px 15px; /* Add padding inside the box */
+  border: 2px solid #ffcc00; /* Yellow border */
+  border-radius: 8px; /* Rounded corners */
+  display: inline-block; /* Ensure it wraps content */
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+}
+
+/* ===== CARD HAND ===== */
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+/* ===== CARD BUTTON ===== */
+
+.cards button {
+  background: linear-gradient(145deg, #ffffff, #f3f6ff);
+  border: 3px solid #111;
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 110px;
+
+  box-shadow: 6px 6px 0 #111;
+  transition: all 0.18s ease;
+}
+
+/* Hover */
+.cards button:hover:not(:disabled) {
+  transform: translate(-5px, -5px) scale(1.03);
+  box-shadow: 12px 12px 0 #111;
+  background: linear-gradient(145deg, #ffffff, #e8eeff);
+}
+
+/* Click */
+.cards button:active:not(:disabled) {
+  transform: translate(2px, 2px) scale(0.97);
+  box-shadow: 2px 2px 0 #111;
+}
+
+/* Disabled */
+.cards button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0 #111;
+}
+
+/* ===== CARD BORDER COLORS ===== */
+
+.cards button:nth-child(1) { border-color: #ff6b6b; }
+.cards button:nth-child(2) { border-color: #4dabf7; }
+.cards button:nth-child(3) { border-color: #ffd43b; }
+.cards button:nth-child(4) { border-color: #69db7c; }
+.cards button:nth-child(5) { border-color: #b197fc; }
+
+/* ===== GAME LOG ===== */
+
+.log {
+  flex: 1; /* 🔥 fills remaining space */
+  width: 100%;
+  overflow-y: auto;
+
+  border: 3px solid #333; /* Dark gray border */
+  background: linear-gradient(135deg, #ffffff, #e0e0e0); /* Black and white gradient */
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+
+  padding: 20px; /* Comfortable padding */
+  font-size: 16px; /* Larger font for readability */
+  line-height: 1.6; /* Better text spacing */
+  text-align: left;
+
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px; /* Rounded corners for a modern look */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effects */
+}
+
+.log:hover {
+  transform: translateY(-6px); /* Lift effect on hover */
+  box-shadow: 15px 15px 30px rgba(0, 0, 0, 0.25); /* Enhanced shadow on hover */
+}
+
+/* Log title */
+.log-title {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #000000;
+}
+
+/* Log entries */
+.log p {
+  margin: 8px 0; /* Spacing between log entries */
+  color: #000; /* Black text for contrast */
+  font-weight: 500; /* Slightly bolder text */
+  animation: logSlide 0.25s ease;
+}
+
+/* ===== SCROLLBAR ===== */
+
+.log::-webkit-scrollbar {
+  width: 8px;
+}
+
+.log::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.log::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.log::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes logSlide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Damage number pop animation */
+.damage-popup {
+  position: absolute;
+  color: red;
+  font-size: 24px;
+  font-weight: bold;
+  animation: damagePop 1s ease-out;
+}
+
+@keyframes damagePop {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+/* Highlight active player with fade effect */
+.active-player {
+  animation: fadePlayer 3s ease-in-out;
+}
+
+@keyframes fadePlayer {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ===== PLAYER NAME AND HP STYLING ===== */
+.player-name.dinesh {
+  color: #ffffff; /* Bright yellow color */
+  font-weight: bold; /* Make it stand out */
+}
+
+.player-name.dinesh .hp {
+  color: #ffffff; /* Ensure HP is also yellow */
+}
+
+/* ===== PLAYER NAME STYLING ===== */
+.player-name.dinesh.eth {
+  color: #ffd700; /* Gold color */
+  font-weight: bold; /* Make it stand out */
+}

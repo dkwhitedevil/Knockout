@@ -1,0 +1,13 @@
+{
+  "name": "yellow-app",
+  "version": "1.0.0",
+  "description": "A simple payment application using Yellow SDK",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "start:mock-server": "node mockYellowServer.js"
+  },
+  "dependencies": {
+    "@erc7824/nitrolite": "latest"
+  }
+}

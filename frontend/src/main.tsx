@@ -6,6 +6,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
+import { SuiProvider } from "./providers/SuiProvider";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { mainnet, sepolia } from "wagmi/chains";
 
@@ -22,7 +23,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <App />
+          <SuiProvider>
+            <App />
+          </SuiProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

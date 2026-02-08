@@ -1,47 +1,71 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+  import { Link } from 'react-router-dom';
+  import SuiIdentity from './wallets/SuiIdentity';
+  import { useCurrentAccount } from '@mysten/dapp-kit';
+  import { fetchSuiBalance } from '@/lib/suiRpc';
 
-function shorten(addr: string) {
-  if (!addr) return '';
-  return addr.slice(0, 6) + '...' + addr.slice(-4);
-}
+  export default function Header() {
+    return (
+      <header className="border-b-[4px] border-foreground p-4 bg-[hsl(var(--background))]">
+        <div className="container mx-auto flex items-center justify-between">
+          <Link to="/">
+            <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tighter">
+              Knockout<span className="text-primary"></span>
+            </h1>
+          </Link>
 
-export default function Header() {
-  const [address, setAddress] = useState<string | null>(() => {
-    try {
-      return localStorage.getItem('wallet_address');
-    } catch {
-      return null;
-    }
-  });
+          {/* Right side actions: wallet identity + SUI balance */}
+          <div className="flex items-center gap-3">
+            <SuiIdentity />
+            <SuiBalanceDisplay />
+          </div>
+        </div>
+      </header>
+    );
+  }
 
+  function SuiBalanceDisplay() {
+  const account = useCurrentAccount();
+  const [balance, setBalance] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  // Keep the hook here! Don't move it.
   useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === 'wallet_address') setAddress(e.newValue);
+    let cancelled = false;
+    
+    // Logic inside the effect handles the "no account" state
+    if (!account?.address) {
+      setBalance(null);
+      setLoading(false);
+      return;
+    }
+
+    (async () => {
+      setLoading(true);
+      try {
+        const b = await fetchSuiBalance(account.address);
+        if (!cancelled) setBalance(b);
+      } catch (e) {
+        if (!cancelled) setBalance(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
     };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
+  }, [account?.address]);
+
+  // NOW you can return early for the UI
+  if (!account) return null;
+  if (loading) return <div className="text-xs opacity-70">Loading SUI…</div>;
+  if (balance == null) return null;
 
   return (
-    <header className="border-b-[4px] border-foreground p-4">
-      <div className="container mx-auto flex items-center justify-between">
-        <Link to="/">
-          <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-tighter">
-            KNOCKOUT<span className="text-primary">_OS</span>
-          </h1>
-        </Link>
-
-        <div className="flex items-center gap-4">
-          {address ? (
-            <div className="px-4 py-2 border-[3px] border-foreground bg-card shadow-brutal-sm">
-              <p className="text-sm font-mono">{shorten(address)}</p>
-            </div>
-          ) : (
-            <div className="text-sm font-mono opacity-70">Not connected</div>
-          )}
-        </div>
-      </div>
-    </header>
+    <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-muted text-xs font-mono opacity-90" title={`${balance} SUI`}>
+      <span className="mr-1">🪙</span>
+      {balance.toFixed(2)} SUI
+    </div>
   );
 }

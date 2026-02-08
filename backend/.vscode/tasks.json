@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start Yellow Server",
+			"type": "shell",
+			"command": "ts-node",
+			"args": [
+				"yellowServer.ts"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
